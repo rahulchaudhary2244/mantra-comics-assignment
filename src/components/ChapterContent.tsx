@@ -3,9 +3,11 @@ import { useBooksApi } from '@/providers/BooksProvider/useBooksApi';
 import { useBooksData } from '@/providers/BooksProvider/useBooksData';
 import { BASE_URL } from '@/utils/constants';
 import { DataObject } from '@/utils/types';
-import { useQuery } from '@tanstack/react-query';
+import { QueryClient, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { ComicImages } from './ComicImages';
+
+const getUrl = (chapterId: number) => `${BASE_URL}/chapters/${chapterId}/`;
 
 export const ChapterContent = () => {
   const {
@@ -19,12 +21,11 @@ export const ChapterContent = () => {
   } = useBooksData();
   const { setBooksData } = useBooksApi();
   const [activePageIdx, setActivePageIdx] = useState(0);
-
-  const url = `${BASE_URL}/chapters/${activeChapterId}/`;
+  const queryClient = new QueryClient();
 
   const { data, isFetching, isError } = useQuery<DataObject>({
     queryKey: ['chapters', activeChapterId, activeBookId],
-    queryFn: () => fetchData(url),
+    queryFn: () => fetchData(getUrl(activeChapterId)),
     staleTime: Infinity,
   });
 
@@ -100,10 +101,24 @@ export const ChapterContent = () => {
     setActivePageIdx(0);
   };
 
-  const handlePrevious = () => {
+  const handlePrevious = async () => {
     const isFirstPageOfChapter = currentPage <= 1;
     const isFirstPageOfBook = isFirstChapterId && isFirstPageOfChapter;
     const isStartOfLibrary = isFirstBookId && isFirstPageOfBook;
+
+    const fetchLastPageIndexIfNotCached = async ({
+      chapterId,
+      bookId,
+    }: {
+      chapterId: number;
+      bookId: number;
+    }) => {
+      const { pages } = await queryClient.ensureQueryData<DataObject>({
+        queryKey: ['chapters', chapterId, bookId],
+        queryFn: () => fetchData(getUrl(chapterId)),
+      });
+      return pages.length - 1;
+    };
 
     const getPreviousChapterIndex = () => {
       const activeBook = booksData.find((book) => book.id === activeBookId);
@@ -114,7 +129,7 @@ export const ChapterContent = () => {
       );
     };
 
-    const goToPreviousBook = () => {
+    const goToPreviousBook = async () => {
       const previousBookIndex =
         booksData.findIndex((book) => book.id === activeBookId) - 1;
       const previousBook = booksData[previousBookIndex];
@@ -124,19 +139,29 @@ export const ChapterContent = () => {
         activeBookId: previousBook.id,
         activeChapterId: lastChapterId,
       });
-      setActivePageIdx(0);
+      setActivePageIdx(
+        await fetchLastPageIndexIfNotCached({
+          bookId: previousBook.id,
+          chapterId: lastChapterId,
+        })
+      );
     };
 
-    const resetToLastBook = () => {
+    const resetToLastBook = async () => {
       const lastBookIndex = booksData.length - 1;
       const lastBook = booksData[lastBookIndex];
       const lastChapterId =
         lastBook.chapter_ids[lastBook.chapter_ids.length - 1];
-      setActivePageIdx(0);
       setBooksData({
         activeBookId: lastBook.id,
         activeChapterId: lastChapterId,
       });
+      setActivePageIdx(
+        await fetchLastPageIndexIfNotCached({
+          bookId: lastBook.id,
+          chapterId: lastChapterId,
+        })
+      );
     };
 
     if (!isFirstPageOfChapter) {
@@ -166,7 +191,12 @@ export const ChapterContent = () => {
       setBooksData({
         activeChapterId: previousChapterId,
       });
-      setActivePageIdx(0);
+      setActivePageIdx(
+        await fetchLastPageIndexIfNotCached({
+          bookId: activeBookId,
+          chapterId: previousChapterId,
+        })
+      );
     }
   };
 
