@@ -22,7 +22,7 @@ export const ChapterContent = () => {
 
   const url = `${BASE_URL}/chapters/${activeChapterId}/`;
 
-  const { data, isFetching } = useQuery<DataObject>({
+  const { data, isFetching, isError } = useQuery<DataObject>({
     queryKey: ['chapters', activeChapterId, activeBookId],
     queryFn: () => fetchData(url),
     staleTime: Infinity,
@@ -34,7 +34,7 @@ export const ChapterContent = () => {
     return <div className="mt-4 text-center">Loading the chapter...</div>;
   }
 
-  if (data === undefined)
+  if (data === undefined || isError)
     return <h1 className="mt-4 text-center">Oops something went wrong...</h1>;
 
   const activePage = data.pages[activePageIdx];

@@ -4,13 +4,13 @@ import { ChapterNavigation } from './ChapterNavigation';
 import { useBooksData } from '@/providers/BooksProvider/useBooksData';
 
 export const Home = () => {
-  const { data, isLoading } = useBooksData();
+  const { data, isLoading, isError } = useBooksData();
 
   if (isLoading) {
     return <div className="mt-4 text-center">Loading books...</div>;
   }
 
-  if (data === undefined)
+  if (data === undefined || isError)
     return <div className="mt-4 text-center">Oops something went wrong...</div>;
 
   return (
