@@ -3,6 +3,7 @@ import { createContext, useReducer, PropsWithChildren } from 'react';
 export type State = {
   activeBookId: number;
   activeChapterId: number;
+  activePageIdx: number;
 };
 
 type Action = { payload: Partial<State> };
@@ -20,6 +21,7 @@ export const BooksContextApi = createContext<Dispatch | undefined>(undefined);
 const initialState = {
   activeBookId: 0,
   activeChapterId: 0,
+  activePageIdx: 0,
 } satisfies State;
 
 export const BooksProvider = ({ children }: PropsWithChildren) => {

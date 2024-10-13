@@ -11,7 +11,7 @@ export const ChapterNavigation = () => {
   const activeBook = data.find((book) => book.id === activeBookId);
 
   const handleClick = (chapterId: number) => {
-    setBooksData({ activeChapterId: chapterId });
+    setBooksData({ activeChapterId: chapterId, activePageIdx: 0 });
   };
 
   return (

@@ -12,6 +12,7 @@ export const BookTitleNavigation = () => {
     setBooksData({
       activeBookId: bookId,
       activeChapterId: data.find((book) => book.id === bookId)?.chapter_ids[0],
+      activePageIdx: 0,
     });
   };
 

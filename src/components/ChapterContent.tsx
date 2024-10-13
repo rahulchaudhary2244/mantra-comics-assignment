@@ -18,9 +18,9 @@ export const ChapterContent = () => {
     isLastChapterId,
     isFirstBookId,
     isFirstChapterId,
+    activePageIdx,
   } = useBooksData();
   const { setBooksData } = useBooksApi();
-  const [activePageIdx, setActivePageIdx] = useState(0);
   const [isPreviousClicked, setPreviousClicked] = useState(false);
   const queryClient = new QueryClient();
 
@@ -63,21 +63,21 @@ export const ChapterContent = () => {
       setBooksData({
         activeBookId: booksData[nextBookIndex].id,
         activeChapterId: booksData[nextBookIndex].chapter_ids[0],
+        activePageIdx: 0,
       });
-      setActivePageIdx(0);
     };
 
     const resetToFirstBook = () => {
-      setActivePageIdx(0);
       setBooksData({
         activeBookId: booksData[0].id,
         activeChapterId: booksData[0].chapter_ids[0],
+        activePageIdx: 0,
       });
     };
 
     if (!isLastPageOfChapter) {
       // User is not at the last page of the chapter
-      setActivePageIdx(activePageIdx + 1);
+      setBooksData({ activePageIdx: activePageIdx + 1 });
       return;
     }
 
@@ -98,8 +98,8 @@ export const ChapterContent = () => {
     setBooksData({
       activeChapterId: booksData.find((book) => book.id === activeBookId)
         ?.chapter_ids[nextChapterIndex],
+      activePageIdx: 0,
     });
-    setActivePageIdx(0);
   };
 
   const handlePrevious = async () => {
@@ -117,6 +117,7 @@ export const ChapterContent = () => {
       const { pages } = await queryClient.ensureQueryData<DataObject>({
         queryKey: ['chapters', chapterId, bookId],
         queryFn: () => fetchData(getUrl(chapterId)),
+        staleTime: Infinity,
       });
       return pages.length - 1;
     };
@@ -139,13 +140,11 @@ export const ChapterContent = () => {
       setBooksData({
         activeBookId: previousBook.id,
         activeChapterId: lastChapterId,
-      });
-      setActivePageIdx(
-        await fetchLastPageIndexIfNotCached({
+        activePageIdx: await fetchLastPageIndexIfNotCached({
           bookId: previousBook.id,
           chapterId: lastChapterId,
-        })
-      );
+        }),
+      });
     };
 
     const resetToLastBook = async () => {
@@ -156,18 +155,16 @@ export const ChapterContent = () => {
       setBooksData({
         activeBookId: lastBook.id,
         activeChapterId: lastChapterId,
-      });
-      setActivePageIdx(
-        await fetchLastPageIndexIfNotCached({
+        activePageIdx: await fetchLastPageIndexIfNotCached({
           bookId: lastBook.id,
           chapterId: lastChapterId,
-        })
-      );
+        }),
+      });
     };
 
     if (!isFirstPageOfChapter) {
       // User is not at the first page of the chapter
-      setActivePageIdx(activePageIdx - 1);
+      setBooksData({ activePageIdx: activePageIdx - 1 });
       return;
     }
 
@@ -191,13 +188,11 @@ export const ChapterContent = () => {
     if (previousChapterId) {
       setBooksData({
         activeChapterId: previousChapterId,
-      });
-      setActivePageIdx(
-        await fetchLastPageIndexIfNotCached({
+        activePageIdx: await fetchLastPageIndexIfNotCached({
           bookId: activeBookId,
           chapterId: previousChapterId,
-        })
-      );
+        }),
+      });
     }
   };
 
