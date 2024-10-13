@@ -4,7 +4,7 @@ import { DataObject, Image } from '@/utils/types';
 type Props = {
   activeImage: Image;
   pages: DataObject['pages'];
-  isFetching: boolean;
+  disableButtons: boolean;
   handleNext: () => void;
   handlePrevious: () => void;
   className?: string;
@@ -15,7 +15,7 @@ const pxToRem = (pixel: number) => pixel / 16;
 export const ComicImages = ({
   activeImage,
   pages,
-  isFetching,
+  disableButtons,
   handleNext,
   handlePrevious,
   className = '',
@@ -31,13 +31,13 @@ export const ComicImages = ({
       <button
         className="w-1/3 h-full bg-transparent absolute top-0 left-0 z-10"
         aria-label="next page"
-        disabled={isFetching}
+        disabled={disableButtons}
         onClick={handleNext}
       />
       <button
         className="w-1/3 h-full bg-transparent absolute top-0 right-0 z-10"
         aria-label="previous page"
-        disabled={isFetching}
+        disabled={disableButtons}
         onClick={handlePrevious}
       />
       {pages.map(({ image }) => {

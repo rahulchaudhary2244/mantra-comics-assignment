@@ -19,7 +19,7 @@ export const useBooksData = () => {
     return data;
   };
 
-  const { data, isLoading, isError } = useQuery<Book[]>({
+  const { data, isLoading, isFetching, isError } = useQuery<Book[]>({
     queryKey: ['books'],
     queryFn,
     staleTime: Infinity,
@@ -54,6 +54,7 @@ export const useBooksData = () => {
     ...state,
     data,
     isLoading,
+    isFetching,
     isError,
     isLastBookId,
     isLastChapterId,

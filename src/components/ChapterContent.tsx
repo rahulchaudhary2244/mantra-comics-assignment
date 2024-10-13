@@ -21,9 +21,10 @@ export const ChapterContent = () => {
   } = useBooksData();
   const { setBooksData } = useBooksApi();
   const [activePageIdx, setActivePageIdx] = useState(0);
+  const [isPreviousClicked, setPreviousClicked] = useState(false);
   const queryClient = new QueryClient();
 
-  const { data, isFetching, isError } = useQuery<DataObject>({
+  const { data, isFetching, isError, isLoading } = useQuery<DataObject>({
     queryKey: ['chapters', activeChapterId, activeBookId],
     queryFn: () => fetchData(getUrl(activeChapterId)),
     staleTime: Infinity,
@@ -31,7 +32,7 @@ export const ChapterContent = () => {
 
   if (booksData === undefined) return null;
 
-  if (isFetching) {
+  if (isFetching || isLoading) {
     return <div className="mt-4 text-center">Loading the chapter...</div>;
   }
 
@@ -205,10 +206,14 @@ export const ChapterContent = () => {
       <ComicImages
         className="mt-4 mx-auto w-full"
         activeImage={activePage.image}
-        isFetching={isFetching}
+        disableButtons={isFetching || isLoading || isPreviousClicked}
         pages={data.pages}
         handleNext={handleNext}
-        handlePrevious={handlePrevious}
+        handlePrevious={async () => {
+          setPreviousClicked(true);
+          await handlePrevious();
+          setPreviousClicked(false);
+        }}
       />
       <div className="text-3xl text-gray-500 font-medium text-center mt-4 h-36">
         {currentPage}&nbsp;/&nbsp;{totalPages}

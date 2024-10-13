@@ -4,9 +4,9 @@ import { ChapterNavigation } from './ChapterNavigation';
 import { useBooksData } from '@/providers/BooksProvider/useBooksData';
 
 export const Home = () => {
-  const { data, isLoading, isError } = useBooksData();
+  const { data, isLoading, isFetching, isError } = useBooksData();
 
-  if (isLoading) {
+  if (isLoading || isFetching) {
     return <div className="mt-4 text-center">Loading books...</div>;
   }
 
