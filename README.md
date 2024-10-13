@@ -4,10 +4,14 @@ This project is a web application built with Vite, React, TypeScript, and Tailwi
 
 ## Table of Contents
 
+- [Demo](#demo)
 - [Project Setup](#project-setup)
 - [Available Scripts](#available-scripts)
 - [Tech Stack](#tech-stack)
 - [Development Tools](#development-tools)
+
+## Demo
+![comic-assignment-demo-gif](https://github.com/rahulchaudhary2244/media-repository/blob/main/comic-assignment-demo.gif)
 
 ## Project Setup
 
