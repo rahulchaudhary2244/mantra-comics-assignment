@@ -171,18 +171,18 @@ export const ChapterContent = () => {
   };
 
   return (
-    <>
+    <div className="px-7">
       <ComicImages
-        className="mt-4 mx-auto relative w-40 h-32"
+        className="mt-4 mx-auto w-full"
         activeImage={activePage.image}
         isFetching={isFetching}
         pages={data.pages}
         handleNext={handleNext}
         handlePrevious={handlePrevious}
       />
-      <div className="text-2xl text-gray-700 font-semibold text-center my-4">
+      <div className="text-3xl text-gray-500 font-medium text-center mt-4 h-36">
         {currentPage}&nbsp;/&nbsp;{totalPages}
       </div>
-    </>
+    </div>
   );
 };

@@ -22,10 +22,10 @@ export const ComicImages = ({
 }: Props) => {
   return (
     <div
-      className={className}
+      className={cn('relative aspect-[10/14]', className)}
       style={{
-        height: `${pxToRem(activeImage.height)}rem`,
-        width: `${pxToRem(activeImage.width)}rem`,
+        maxHeight: `${pxToRem(activeImage.height)}rem`,
+        maxWidth: `${pxToRem(activeImage.width)}rem`,
       }}
     >
       <button
@@ -45,9 +45,12 @@ export const ComicImages = ({
           <img
             key={image.id}
             src={image.file}
-            className={cn('absolute top-0 left-0 z-0 invisible', {
-              visible: activeImage.id === image.id,
-            })}
+            className={cn(
+              'absolute top-0 left-0 z-0 invisible w-full h-full object-cover',
+              {
+                visible: activeImage.id === image.id,
+              }
+            )}
           />
         );
       })}

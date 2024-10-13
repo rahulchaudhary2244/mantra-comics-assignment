@@ -16,7 +16,7 @@ export const BookTitleNavigation = () => {
   };
 
   return (
-    <div className="flex gap-2 justify-center mt-4">
+    <div className="flex gap-2 justify-center mt-4 flex-wrap">
       {data.map(({ id, title }) => {
         return (
           <Button
